@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "NN/Neuron.h"
+#include "NN/NeuralNetwork.h"
 
 
 
@@ -12,5 +13,8 @@ int main() {
 	Neuron neuron(wegith, bias);
 
 
-	std::cout << neuron.FeedFoward(x) << std::endl;
+	std::cout << neuron.FeedForward(x) << std::endl;
+
+    
+	return 0;
 }

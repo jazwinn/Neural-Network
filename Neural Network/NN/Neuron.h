@@ -10,7 +10,7 @@ public:
 	{}
 
 
-	float FeedFoward(const std::vector<float>& input) {
+	float FeedForward(const std::vector<float>& input) {
 
 		float result = 0;
 		for (size_t n{}; n < input.size(); n++) {

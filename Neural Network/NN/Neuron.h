@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include "Math/Math.h"
 
 class Neuron {
 public:
@@ -11,25 +12,31 @@ public:
 
 
 	float FeedForward(const std::vector<float>& input) {
+		m_input = input;
+
 
 		float result = 0;
 		for (size_t n{}; n < input.size(); n++) {
 			result += input[n] * m_weight[n];
 		}
-		return Sigmoid(result + m_bias);
+		m_result = math::Sigmoid(result + m_bias);
+		return m_result;
 	}
 
 
-	//Activiation function - TODO add the other activations.
-	float Sigmoid(float x) {
-		return 1 / (1 + std::exp(static_cast<double>(-x)));
+	float Derivative() {
+		return m_result * (1 - m_result);
 	}
 
-	float ReLU(float x) {
-		return std::max(0.f,x);
-	}
+	void Update(float learningRate, float delta) {
+		for (size_t i = 0; i < m_weight.size(); i++)
+			m_weight[i] -= learningRate * delta * m_input[i];
 
+		m_bias -= learningRate * delta;
+	}
 
 	std::vector<float> m_weight;
+	std::vector<float> m_input;
 	float m_bias;
+	float m_result;
 };

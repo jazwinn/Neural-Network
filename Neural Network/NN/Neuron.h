@@ -4,6 +4,12 @@
 #include <cmath>
 #include "Math/Math.h"
 
+enum ACTIVATION {
+	NONE,
+	SIGMOID,
+	RELU
+};
+
 class Neuron {
 public:
 	Neuron(std::vector<float> weight, float bias):
@@ -11,15 +17,31 @@ public:
 	{}
 
 
-	float FeedForward(const std::vector<float>& input) {
+	float FeedForward(const std::vector<float>& input, ACTIVATION activation = NONE) {
 		m_input = input;
 
 
-		float result = 0;
+		m_result = 0;
 		for (size_t n{}; n < input.size(); n++) {
-			result += input[n] * m_weight[n];
+			m_result += input[n] * m_weight[n];
 		}
-		m_result = math::Sigmoid(result + m_bias);
+
+
+		switch (activation)
+		{
+		case SIGMOID:
+			m_result = math::Sigmoid(m_result + m_bias);
+			break;
+		case RELU:
+			m_result = math::ReLU(m_result + m_bias);
+			break;
+		default:
+			break;
+		}
+
+		
+
+
 		return m_result;
 	}
 
@@ -28,11 +50,12 @@ public:
 		return m_result * (1 - m_result);
 	}
 
-	void Update(float learningRate, float delta) {
-		for (size_t i = 0; i < m_weight.size(); i++)
-			m_weight[i] -= learningRate * delta * m_input[i];
+	void Update(float lr, float delta, const std::vector<float>& inputs)
+	{
+		for (int i = 0; i < m_weight.size(); i++)
+			m_weight[i] -= lr * delta * inputs[i];
 
-		m_bias -= learningRate * delta;
+		m_bias -= lr * delta;
 	}
 
 	std::vector<float> m_weight;
